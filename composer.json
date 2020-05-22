@@ -1,0 +1,44 @@
+{
+    "name": "basedesign/craft-instagram",
+    "description": "Instagram integration for Craft CMS",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "instagram"
+    ],
+    "support": {
+        "docs": "https://github.com/BaseDesign/craft-instagram/blob/master/README.md",
+        "issues": "https://github.com/BaseDesign/craft-instagram/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Base Design",
+            "homepage": "https://www.basedesign.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "basedesign\\instagram\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Instagram",
+        "handle": "instagram",
+        "developer": "Base Design",
+        "developerUrl": "https://www.basedesign.com",
+        "documentationUrl": "https://github.com/BaseDesign/craft-instagram/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/BaseDesign/craft-instagram/master/CHANGELOG.md",
+        "components": {
+            "instagramService": "basedesign\\instagram\\services\\InstagramService"
+        },
+        "class": "basedesign\\instagram\\Instagram"
+    }
+}

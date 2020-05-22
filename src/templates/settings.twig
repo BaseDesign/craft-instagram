@@ -1,0 +1,36 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Instagram plugin for Craft CMS 3.x
+ *
+ * Instagram Settings.twig
+ *
+ * @author    Base Design
+ * @copyright Copyright (c) 2020 Base Design
+ * @link      https://www.basedesign.com
+ * @package   Instagram
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("basedesign\\instagram\\assetbundles\\instagram\\InstagramAsset") %}
+
+{{ forms.textField({
+    label: 'Username',
+    instructions: 'The username of your Instagram account.',
+    id: 'username',
+    name: 'username',
+    value: settings['username'],
+    first: true,
+}) }}
+
+{{ forms.textField({
+    label: 'Instagram long-lived access token ',
+    instructions: 'A long-lived access token of the Instagram app you created. It will be renewed automatically.',
+    id: 'accessToken',
+    name: 'accessToken',
+    value: settings['accessToken'],
+    tip: 'Generate a token in App Dashboard > Products > Instagram > Basic Display. <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener" class="go">Go to your apps</a>.',
+}) }}
