@@ -77,8 +77,8 @@ class Install extends Migration
                 '{{%instagram_settings}}',
                 [
                     'id' => $this->primaryKey(),
-                    'username' => $this->string(255)->notNull(),
-                    'accessToken' => $this->string(255)->notNull(),
+                    'username' => $this->string(255)->notNull()->defaultValue(''),
+                    'accessToken' => $this->string(255)->notNull()->defaultValue(''),
                     'dateExpire' => $this->string(255)->notNull()->defaultValue(''),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
