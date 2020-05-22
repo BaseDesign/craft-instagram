@@ -26,13 +26,13 @@ This plugin uses two different methods to fetch Instagram media information:
 
 1. Use the Instagram Basic Display API to fetch the 24 most recent media from an authenticated user
 
-2. Append /media/?size=l at the end of a given media URL without requiring authentication
+2. Append /media/?size=l to a given Instagram URL to fetch the media without authentication
 
 ## Configuring Instagram
 
-To use the Instagram Basic Display API you will first need to create a [Facebook App](https://developers.facebook.com/apps), add the Instagram "Product" and link the account you need to fetch media from as an Instagram Tester. Facebook provides instructions in [its API documentation](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started). Follow the instructions up until Step 3 included.
+To use the Instagram Basic Display API you will first need to create a [Facebook App](https://developers.facebook.com/apps), add the Instagram "Product" and add an Instagram tester account. It should be the account you will be fetching media from. Facebook provides instructions in [its API documentation](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started). Follow the instructions up until Step 3 included.
 
-After installing the plugin you'll need to access the plugin's Settings page and insert your Instagram username together with a first long-lived access token for the API. You can generate this long-lived access token in your Facebook app. It will renew automatically when it expires.
+After installing the plugin you will need to access the plugin's Settings page and fill in your Instagram username together with a first long-lived access token for the API. Generate this long-lived access token in your Facebook app. It will renew automatically as soon as it expires.
 
 ## Using Instagram
 
@@ -53,5 +53,7 @@ This plugin includes 5 template variables:
 Some things to do, and ideas for potential features:
 
 * Generate the first long-lived access token from the App ID and App Secret.
+
+* Cache requests in order to reduce Guzzle usage.
 
 Brought to you by [Base Design](https://www.basedesign.com)
