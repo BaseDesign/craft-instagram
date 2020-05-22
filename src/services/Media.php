@@ -79,12 +79,10 @@ class Media extends Component
     public function getFromUrls($urls)
     {
         $allMedia = [];
-        $client = new \GuzzleHttp\Client();
 
         foreach ($urls as $url) {
-            preg_match('/https:\/\/www\.instagram\.com\/p\/[\w|-]*\/?/', $url, $matches);
-
-            if (count($matches) == 0) {
+            preg_match('/(?:.*)?(instagram\.com\/p\/[\w|-]*)(?:\/)?(?:.*)?/', $url, $matches);
+            if (count($matches) < 2) {
                 Craft::info(
                     Craft::t(
                         'instagram',
@@ -97,19 +95,19 @@ class Media extends Component
                 return $allMedia;
             }
 
-            $url = $matches[0];
-            if (substr($url, strlen($url) - 1, 1) != '/') {
-                $url .= '/';
-            }
+            $url = 'https://www.' . $matches[1];
+            $urlMedia = 'https://www.' . $matches[1] . '/media/?size=l';
 
             try {
-                $endpoint = "${url}media/?size=l";
-                $media = $client->get($endpoint);
+                $client = new \GuzzleHttp\Client();
+                $endpoint = $urlMedia;
+                
+                $response = $client->get($endpoint);
 
-                if ($media->getStatusCode() == 200) {
+                if ($response->getStatusCode() == 200) {
                     $allMedia[] = [
-                        'image' => $endpoint,
-                        'url' => $url
+                        'url' => $url,
+                        'image' => $endpoint
                     ];
                 }
             } catch (\Exception $e) {
