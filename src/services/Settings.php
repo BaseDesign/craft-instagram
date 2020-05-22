@@ -28,11 +28,6 @@ class Settings extends Component
     // =========================================================================
 
     /**
-     * @var string The recipient of all emails
-     */
-    public $emailRecipient = 'dev@basedesign.com';
-
-    /**
      * Get the Instagram username.
      *
      * @return string
@@ -119,7 +114,7 @@ class Settings extends Component
             $accessToken = $settings->accessToken;
         }
 
-        // try {
+        try {
             $client = new \GuzzleHttp\Client();
             $endpoint = "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${accessToken}";
 
@@ -138,26 +133,18 @@ class Settings extends Component
             $record = $this->saveRecord($responseAccessToken, $dateExpire);
 
             return $record;
-        // } catch(\Exception $e) {
-        //     Craft::info(
-        //         Craft::t(
-        //             'instagram',
-        //             'A new access token could not be retrieved.',
-        //             ['name' => 'Instagram']
-        //         ),
-        //         __METHOD__
-        //     );
-        //
-        //     $email = Craft::$app
-        //         ->getMailer()
-        //         ->compose()
-        //         ->setTo($this->emailRecipient)
-        //         ->setSubject('Problem with instagram access token')
-        //         ->setHtmlBody('A new access token could not be retrieved. Please request a new access token.')
-        //         ->send();
-        //
-        //     return $record;
-        // }
+        } catch(\Exception $e) {
+            Craft::info(
+                Craft::t(
+                    'instagram',
+                    'A new access token could not be retrieved.',
+                    ['name' => 'Instagram']
+                ),
+                __METHOD__
+            );
+        
+            return $record;
+        }
     }
 
     /**
