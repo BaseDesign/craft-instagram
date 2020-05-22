@@ -44,8 +44,8 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['username', 'string'],
-            ['accessToken', 'string'],
+            [['username', 'accessToken'], 'string'],
+            [['username', 'accessToken'], 'required'],
         ];
     }
 }

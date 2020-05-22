@@ -23,6 +23,8 @@
     id: 'username',
     name: 'username',
     value: settings['username'],
+    required: true,
+    errors: settings.getErrors('username'),
     first: true,
 }) }}
 
@@ -32,5 +34,7 @@
     id: 'accessToken',
     name: 'accessToken',
     value: settings['accessToken'],
+    required: true,
+    errors: settings.getErrors('accessToken'),
     tip: 'Generate a token in App Dashboard > Products > Instagram > Basic Display. <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener" class="go">Go to your apps</a>.',
 }) }}
