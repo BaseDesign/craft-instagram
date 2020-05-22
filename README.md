@@ -24,7 +24,7 @@ To install the plugin, follow these instructions.
 
 This plugin uses two different methods to fetch Instagram media information:
 
-1. Use the Instagram Basic Display API to fetch the 24 most recent media from an authenticated user
+1. Use the Instagram Basic Display API to fetch the 25 most recent media from an authenticated user
 
 2. Append /media/?size=l to a given Instagram URL to fetch the media without authentication
 
@@ -44,7 +44,7 @@ This plugin includes 5 template variables:
 
 * `craft.instagram.getAccessToken` in order to get the access token used to fetch data with the API
 
-* `craft.instagram.getMediaFromUser` in order to get the 24 latest media from the authenticated Instagram user
+* `craft.instagram.getMediaFromUser` in order to get the 25 latest media from the authenticated Instagram user
 
 * `craft.instagram.getMediaFromUrls(instagramUrlsArray)` in order to get the media information of specific Instagram media
 
