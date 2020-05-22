@@ -169,6 +169,7 @@ class Settings extends Component
             $record = $recordExisting;
         }
 
+        $record->username = $username;
         $record->accessToken = $accessToken;
         $record->dateExpire = $dateExpire->format('Y-m-d H:i:s');
 
