@@ -39,6 +39,15 @@ class Media extends Component
         if (empty($token)) {
             return $allMedia;
         }
+        
+        $cache = Craft::$app->getCache();
+        $cachedMedia = $cache->get('instagram-user');
+        
+        if ($cachedMedia !== false) {
+            $allMedia = $cachedMedia;
+            
+            return $allMedia;
+        }
 
         try {
             $client = new \GuzzleHttp\Client();
@@ -63,6 +72,12 @@ class Media extends Component
                     ];
                 }
             }
+            
+            $cache->set(
+                'instagram-user',
+                $allMedia,
+                3600 // Cache for 1 day
+            );
         } catch(\Exception $e) {
             Craft::warning(
                 Craft::t(
@@ -89,7 +104,7 @@ class Media extends Component
         $allMedia = [];
 
         foreach ($urls as $url) {
-            preg_match('/(?:.*)?(instagram\.com\/p\/[\w|-]*)(?:\/)?(?:.*)?/', $url, $matches);
+            preg_match('/(?:.*)?(instagram\.com\/p\/([\w|-]*))(?:\/)?(?:.*)?/', $url, $matches);
             if (count($matches) < 2) {
                 Craft::warning(
                     Craft::t(
@@ -106,17 +121,32 @@ class Media extends Component
             $url = 'https://www.' . $matches[1];
             $urlMedia = 'https://www.' . $matches[1] . '/media/?size=l';
 
+            $cache = Craft::$app->getCache();
+            $cachedMedia = $cache->get('instagram-id-' . $matches[2]);
+            
+            if ($cachedMedia !== false) {
+                $allMedia[] = $cachedMedia;
+                continue;
+            }
+
             try {
                 $client = new \GuzzleHttp\Client();
                 $endpoint = $urlMedia;
                 
                 $response = $client->get($endpoint);
+                $media = [
+                    'url' => $url,
+                    'image' => $endpoint
+                ];
 
                 if ($response->getStatusCode() == 200) {
-                    $allMedia[] = [
-                        'url' => $url,
-                        'image' => $endpoint
-                    ];
+                    $allMedia[] = $media;
+                    
+                    $cache->set(
+                        'instagram-id-' . $matches[2],
+                        $media,
+                        86400 // Cache for 1 day
+                    );
                 }
             } catch (\Exception $e) {
                 Craft::warning(
