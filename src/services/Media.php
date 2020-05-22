@@ -56,7 +56,7 @@ class Media extends Component
                 ];
             }
         } catch(\Exception $e) {
-            Craft::info(
+            Craft::warning(
                 Craft::t(
                     'instagram',
                     'There was an error retrieving media from Instagram.',
@@ -83,7 +83,7 @@ class Media extends Component
         foreach ($urls as $url) {
             preg_match('/(?:.*)?(instagram\.com\/p\/[\w|-]*)(?:\/)?(?:.*)?/', $url, $matches);
             if (count($matches) < 2) {
-                Craft::info(
+                Craft::warning(
                     Craft::t(
                         'instagram',
                         'The Instagram URL isn\'t valid',
@@ -111,7 +111,7 @@ class Media extends Component
                     ];
                 }
             } catch (\Exception $e) {
-                Craft::info(
+                Craft::warning(
                     Craft::t(
                         'instagram',
                         'There was an error retrieving media from Instagram',

@@ -134,7 +134,7 @@ class Settings extends Component
 
             return $record;
         } catch(\Exception $e) {
-            Craft::info(
+            Craft::warning(
                 Craft::t(
                     'instagram',
                     'A new access token could not be retrieved.',
