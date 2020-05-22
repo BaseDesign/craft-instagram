@@ -42,18 +42,26 @@ class Media extends Component
 
         try {
             $client = new \GuzzleHttp\Client();
-            $endpoint = "https://graph.instagram.com/me/media?fields=id,caption,media_url,thumbnail_url,permalink&access_token=${token}";
+            $endpoint = "https://graph.instagram.com/me/media?fields=id,caption,media_url,thumbnail_url,permalink,media_type&access_token=${token}";
 
             $response = $client->get($endpoint);
             $response = \GuzzleHttp\json_decode($response->getBody());
             $responseData = $response->data;
 
             foreach ($responseData as $media) {
-                $allMedia[] = [
-                    'image' => $media->thumbnail_url ?? $media->media_url,
-                    'caption' => $media->caption,
-                    'url' => $media->permalink
-                ];
+                $mediaUrl = $media->thumbnail_url ?? $media->media_url ?? null;
+                $caption = $media->caption ?? null;
+                $type = $media->media_type ?? null;
+                $permalink = $media->permalink ?? null;
+                
+                if (!empty($mediaUrl) && !empty($permalink)) {
+                    $allMedia[] = [
+                        'image' => $mediaUrl,
+                        'url' => $permalink,
+                        'caption' => $caption,
+                        'type' => strtolower($type)
+                    ];
+                }
             }
         } catch(\Exception $e) {
             Craft::warning(
