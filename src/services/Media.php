@@ -31,7 +31,7 @@ class Media extends Component
      *
      * @return array
      */
-    public function getFromUser()
+    public function getMediaFromUser()
     {
         $allMedia = [];
         $token = Instagram::$plugin->settings->getAccessToken();
@@ -54,29 +54,18 @@ class Media extends Component
             $endpoint = "https://graph.instagram.com/me/media?fields=id,caption,media_url,thumbnail_url,permalink,media_type&access_token=${token}";
 
             $response = $client->get($endpoint);
-            $response = \GuzzleHttp\json_decode($response->getBody());
-            $responseData = $response->data;
+            $responseBody = \GuzzleHttp\json_decode($response->getBody());
+            $responseData = $responseBody->data;
 
-            foreach ($responseData as $media) {
-                $mediaUrl = $media->thumbnail_url ?? $media->media_url ?? null;
-                $caption = $media->caption ?? null;
-                $type = $media->media_type ?? null;
-                $permalink = $media->permalink ?? null;
-                
-                if (!empty($mediaUrl) && !empty($permalink)) {
-                    $allMedia[] = [
-                        'image' => $mediaUrl,
-                        'url' => $permalink,
-                        'caption' => $caption,
-                        'type' => strtolower($type)
-                    ];
-                }
+            foreach ($responseData as $data) {
+                $media = $this->parseInstagramApi($data);
+                $allMedia[] = $media;
             }
             
             $cache->set(
                 'instagram-user',
                 $allMedia,
-                3600 // Cache for 1 day
+                60*60*24*30 // Cache for 1 month
             );
         } catch(\Exception $e) {
             Craft::warning(
@@ -99,7 +88,7 @@ class Media extends Component
      *
      * @return array
      */
-    public function getFromUrls($urls)
+    public function getMediaFromUrls($urls)
     {
         $allMedia = [];
 
@@ -115,39 +104,34 @@ class Media extends Component
                     __METHOD__
                 );
 
-                return $allMedia;
+                continue;
             }
-
-            $url = 'https://www.' . $matches[1];
-            $urlMedia = 'https://www.' . $matches[1] . '/media/?size=l';
 
             $cache = Craft::$app->getCache();
             $cachedMedia = $cache->get('instagram-id-' . $matches[2]);
             
             if ($cachedMedia !== false) {
                 $allMedia[] = $cachedMedia;
+                
                 continue;
             }
 
             try {
                 $client = new \GuzzleHttp\Client();
-                $endpoint = $urlMedia;
+                $endpoint = 'https://www.' . $matches[1] . '/?__a=1';
                 
                 $response = $client->get($endpoint);
-                $media = [
-                    'url' => $url,
-                    'image' => $endpoint
-                ];
-
-                if ($response->getStatusCode() == 200) {
-                    $allMedia[] = $media;
-                    
-                    $cache->set(
-                        'instagram-id-' . $matches[2],
-                        $media,
-                        86400 // Cache for 1 day
-                    );
-                }
+                $responseBody = \GuzzleHttp\json_decode($response->getBody());
+                
+                $url = 'https://www.' . $matches[1];
+                $media = $this->parseInstagramUrl($responseBody, $url);
+                $allMedia[] = $media;
+                
+                $cache->set(
+                    'instagram-id-' . $matches[2],
+                    $media,
+                    60*60*24*30 // Cache for 1 month
+                );
             } catch (\Exception $e) {
                 Craft::warning(
                     Craft::t(
@@ -161,5 +145,56 @@ class Media extends Component
         }
 
         return $allMedia;
+    }
+    
+    // Protected Methods
+    // =========================================================================
+    
+    // Parse the JSON that is returned by the Instagram API
+    protected function parseInstagramApi($data) {
+        $media = [];
+        
+        $mediaUrl = $data->thumbnail_url ?? $data->media_url ?? null;
+        $caption = $data->caption ?? null;
+        $type = $data->media_type ?? null;
+        $permalink = $data->permalink ?? null;
+        
+        if (empty($mediaUrl) || empty($permalink)) {
+            return $media;
+        }
+        
+        $media = [
+            'image' => $mediaUrl,
+            'url' => $permalink,
+            'caption' => $caption,
+            'type' => strtolower($type)
+        ];
+        
+        return $media;
+    }
+    
+    // Parse the JSON that is returned by calling the ?__a=1 URL
+    protected function parseInstagramUrl($data, $url) {
+        $media = [];
+        
+        $mediaUrl = $data->graphql->shortcode_media->display_url ?? null;
+        $caption = $data->graphql->shortcode_media->edge_media_to_caption->edges[0]->node->text ?? null;
+        $isVideo = $data->graphql->shortcode_media->is_video ?? null;
+        $hasChildren = $data->graphql->shortcode_media->edge_sidecar_to_children ?? null;
+        $type = $hasChildren ? 'carousel_album' : ($isVideo ? 'video' : 'image');
+        $permalink = $url;
+        
+        if (empty($mediaUrl) || empty($permalink)) {
+            return $media;
+        }
+        
+        $media = [
+            'image' => $mediaUrl,
+            'url' => $permalink,
+            'caption' => $caption,
+            'type' => $type
+        ];
+        
+        return $media;
     }
 }

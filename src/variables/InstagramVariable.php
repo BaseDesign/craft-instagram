@@ -47,14 +47,14 @@ class InstagramVariable
 
     public function getMediaFromUser()
     {
-        $recentMediaFromUser = Instagram::$plugin->media->getFromUser();
+        $recentMediaFromUser = Instagram::$plugin->media->getMediaFromUser();
 
         return $recentMediaFromUser;
     }
 
     public function getMediaFromUrls($urls)
     {
-        $mediaFromUrls = Instagram::$plugin->media->getFromUrls($urls);
+        $mediaFromUrls = Instagram::$plugin->media->getMediaFromUrls($urls);
 
         return $mediaFromUrls;
     }
