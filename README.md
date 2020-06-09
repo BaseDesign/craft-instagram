@@ -30,7 +30,7 @@ This plugin uses two different methods to fetch Instagram media information:
 
 ## Configuring Instagram
 
-To use the Instagram Basic Display API you will first need to create a [Facebook App](https://developers.facebook.com/apps), add the Instagram "Product" and add an Instagram tester account. It should be the account you will be fetching media from. Facebook provides instructions in [its API documentation](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started). Follow the instructions up until Step 3 included.
+To use the Instagram Basic Display API you will first need to create a [Facebook App](https://developers.facebook.com/apps), add the Instagram "Product". Then go to the Instagram -> Basic Display and create a new app. Finally add an Instagram tester account with the account you will be fetching media from. Facebook provides instructions in [its API documentation](https://developers.facebook.com/docs/instagram-basic-display-api/getting-started). Follow the instructions up until Step 3 included.
 
 After installing the plugin you will need to access the plugin's Settings page and fill in your Instagram username together with a first long-lived access token for the API. Generate this long-lived access token in your Facebook app. It will renew automatically as soon as it expires.
 
