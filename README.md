@@ -54,6 +54,4 @@ Some things to do, and ideas for potential features:
 
 * Generate the first long-lived access token from the App ID and App Secret.
 
-* Cache requests in order to reduce Guzzle usage.
-
 Brought to you by [Base Design](https://www.basedesign.com)
