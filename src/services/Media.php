@@ -118,20 +118,23 @@ class Media extends Component
 
             try {
                 $client = new \GuzzleHttp\Client();
-                $endpoint = 'https://www.' . $matches[1] . '/?__a=1';
+                $endpoint = 'https://www.' . $matches[1] . '/media/?size=l';
                 
                 $response = $client->get($endpoint);
-                $responseBody = \GuzzleHttp\json_decode($response->getBody());
                 
-                $url = 'https://www.' . $matches[1];
-                $media = $this->parseInstagramUrl($responseBody, $url);
-                $allMedia[] = $media;
-                
-                $cache->set(
-                    'instagram-id-' . $matches[2],
-                    $media,
-                    60*60*24*30 // Cache for 1 month
-                );
+                if ($response->getStatusCode() == 200) {
+                    $media = [
+                        'image' => $endpoint,
+                        'url' => 'https://www.' . $matches[1]
+                    ];
+                    $allMedia[] = $media;
+                    
+                    $cache->set(
+                        'instagram-id-' . $matches[2],
+                        $media,
+                        60*60*24*30 // Cache for 1 month
+                    );
+                }
             } catch (\Exception $e) {
                 Craft::warning(
                     Craft::t(
@@ -168,31 +171,6 @@ class Media extends Component
             'url' => $permalink,
             'caption' => $caption,
             'type' => strtolower($type)
-        ];
-        
-        return $media;
-    }
-    
-    // Parse the JSON that is returned by calling the ?__a=1 URL
-    protected function parseInstagramUrl($data, $url) {
-        $media = [];
-        
-        $mediaUrl = $data->graphql->shortcode_media->display_url ?? null;
-        $caption = $data->graphql->shortcode_media->edge_media_to_caption->edges[0]->node->text ?? null;
-        $isVideo = $data->graphql->shortcode_media->is_video ?? null;
-        $hasChildren = $data->graphql->shortcode_media->edge_sidecar_to_children ?? null;
-        $type = $hasChildren ? 'carousel_album' : ($isVideo ? 'video' : 'image');
-        $permalink = $url;
-        
-        if (empty($mediaUrl) || empty($permalink)) {
-            return $media;
-        }
-        
-        $media = [
-            'image' => $mediaUrl,
-            'url' => $permalink,
-            'caption' => $caption,
-            'type' => $type
         ];
         
         return $media;
